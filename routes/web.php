@@ -39,6 +39,24 @@ Route::get('/dashboard', \App\Http\Livewire\Dashboard\Main::class)->name('dashbo
     Route::get('/documents', \App\Http\Livewire\Documents\Upload::class);
     Route::get('/referral', \App\Http\Livewire\Referral\Form::class);
 
+    Route::get('/opportunities/fund/{id}', \App\Http\Livewire\Opportunities\FundNow::class)
+    ->middleware(['auth'])
+    ->name('opportunities.fund');
+
+    Route::get('/opportunities/review/{id}', \App\Http\Livewire\Opportunities\FundReview::class)
+    ->middleware(['auth'])
+    ->name('opportunities.review');
+
+    Route::get('/opportunities/docusign/{id}',
+    \App\Http\Livewire\Opportunities\FundDocuSign::class)
+    ->middleware(['auth'])
+    ->name('opportunities.docusign');
+Route::get('/opportunities/payment/{id}',
+    \App\Http\Livewire\Opportunities\FundPayment::class)
+    ->middleware(['auth'])
+    ->name('opportunities.payment');
+
+
 
 });
 

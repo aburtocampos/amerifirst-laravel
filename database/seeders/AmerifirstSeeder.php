@@ -47,17 +47,25 @@ class AmerifirstSeeder extends Seeder
         // 3. Crear 5 loans para el lender
         // ============================================
         for ($i = 1; $i <= 5; $i++) {
+                $statuses = [
+                    'paid',
+                    'closed',
+                    'in_transit',
+                    'invoiced',
+                    'in_production',
+                ];
 
-            $loan = Loan::create([
-                'user_id' => $user->id,
-                'promissory_note' => "PN-00$i",
-                'date_signed' => now()->subDays(rand(10, 60)),
-                'principal' => rand(3000, 20000),
-                'interest' => rand(150, 800),
-                'total' => rand(3500, 22000),
-                'due_date' => now()->addDays(rand(30, 120)),
-                'file_url' => null,
-            ]);
+                $loan = Loan::create([
+                    'user_id' => $user->id,
+                    'promissory_note' => "PN-00$i",
+                    'date_signed' => now()->subDays(rand(10, 60)),
+                    'principal' => rand(3000, 20000),
+                    'interest' => rand(150, 800),
+                    'total' => rand(3500, 22000),
+                    'due_date' => now()->addDays(rand(30, 120)),
+                    'file_url' => null,
+                    'status' => $statuses[array_rand($statuses)],
+                ]);
 
             // ================================
             // 4. Crear pagos para cada loan

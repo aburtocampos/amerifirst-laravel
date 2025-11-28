@@ -17,6 +17,7 @@ class Loan extends Model
         'total',
         'due_date',
         'file_url',
+         'status',
     ];
 
     public function user()

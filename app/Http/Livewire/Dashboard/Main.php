@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Dashboard;
 
 use Livewire\Component;
+use Carbon\Carbon;
 
 class Main extends Component
 {
@@ -11,27 +12,53 @@ class Main extends Component
        // return view('livewire.dashboard.main');
 
        $user = auth()->user();
+ // LOANS
 
-        // KPIs
-        $totalLoans     = $user->loans()->count();
-        $totalPrincipal = $user->loans()->sum('principal');
-        $totalInterest  = $user->loans()->sum('interest');
-        $totalPaid      = $user->loans()->sum('total'); // total loan amount
-        $totalPayments  = $user->loans()->with('payments')
-                                ->get()
-                                ->flatMap->payments
-                                ->sum('amount');
+        $loans = $user->loans;
 
-        // pending = loan total - payments made
-        $outstanding = $totalPaid - $totalPayments;
+        // STATUS COUNTS
+        $paidClosed      = $loans->whereIn('status', ['paid', 'closed'])->count();
+        $inTransit       = $loans->where('status', 'in_transit')->count();
+        $invoiced        = $loans->where('status', 'invoiced')->count();
+        $inProduction    = $loans->where('status', 'in_production')->count();
+
+        // FINANCIALS
+        $totalPrincipal       = $loans->sum('principal');
+        $totalInterest        = $loans->sum('interest');
+        $totalLoanAmount      = $loans->sum('total');
+
+        // PAYMENTS
+        $payments = $loans->flatMap->payments;
+
+        $totalPaidPrincipal   = $payments->sum('amortization');
+        $totalPaidInterest    = $payments->sum('interest');
+        $totalPaid            = $payments->sum('amount');
+
+        // OUTSTANDING
+        $outstandingPrincipal = $totalPrincipal - $totalPaidPrincipal;
+        $outstandingInterest  = $totalInterest - $totalPaidInterest;
+
+        // PROMISSORY NOTE COUNT
+        $promissoryCount = $loans->count();
+
+        // SCHEDULED PAYMENTS (from schedule in long term logic)
+        $scheduledPayments = $payments->where('status', 'scheduled')->count();
 
         return view('livewire.dashboard.main', compact(
-            'totalLoans',
+            'paidClosed',
+            'inTransit',
+            'invoiced',
+            'inProduction',
             'totalPrincipal',
             'totalInterest',
+            'totalLoanAmount',
+            'totalPaidPrincipal',
+            'totalPaidInterest',
             'totalPaid',
-            'totalPayments',
-            'outstanding'
+            'outstandingPrincipal',
+            'outstandingInterest',
+            'promissoryCount',
+            'scheduledPayments'
         ))->layout('layouts.app');
 
     }

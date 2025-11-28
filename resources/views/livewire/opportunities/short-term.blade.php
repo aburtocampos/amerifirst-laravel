@@ -29,10 +29,12 @@
                 <strong>Turnaround:</strong> {{ $o->turnaround_days }} days
             </p>
 
-            <button
-                class="mt-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+           <a
+                href="{{ route('opportunities.fund', $o->id) }}"
+                class="mt-4 block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-center">
                 Fund Now
-            </button>
+            </a>
+
 
         </div>
         @endforeach
